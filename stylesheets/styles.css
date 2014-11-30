@@ -1,0 +1,21 @@
+.pad {
+  width: 5em; 
+  height: 5em; 
+  margin-bottom: 1em;
+  display: inline-block; 
+  background: #DADADA; 
+  box-shadow: rgba(0, 0, 0, 0.0980392) -6px 6px 0px 0px inset;
+  margin-right: 1em; 
+}
+
+.selected {
+  background: #00FF00;
+}
+
+.playing {
+  background: radial-gradient(#FCFCFC, #E3E3E3, #B6B6B6);
+}
+
+.playing.selected {
+  background: radial-gradient(#FCFFFC, #E3FFE3, #B6FFB6); 
+}
