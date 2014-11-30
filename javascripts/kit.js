@@ -24,10 +24,10 @@ Kit.prototype.load = function() {
   var pathName = this.pathName();
 
   //don't want to have set number of instruments, or whatever
-  var kickPath = pathName + "kick.aif";
+  var kickPath = pathName + "kick.mp3";
 
   //TEMPORARY
-  kickPath = "http://www.freesound.org/data/previews/102/102130_1721044-lq.mp3";
+  //kickPath = "http://www.freesound.org/data/previews/102/102130_1721044-lq.mp3";
 
   this.loadSample(kickPath);
 
