@@ -7,6 +7,12 @@ var rhythmIndex = 0;
 var timeoutId;
 var testBuffer = null;
 
+var currentKit = null;
+
+if (window.hasOwnProperty('AudioContext') && !window.hasOwnProperty('webkitAudioContext')) {
+  window.webkitAudioContext = AudioContext;
+}
+
 $(function() {
   $('.pad').click(function() {
     $(this).toggleClass("selected");
@@ -17,9 +23,23 @@ $(function() {
 
 function init() {
   context = new webkitAudioContext();
-  loadTestBuffer();
+  loadKits();
 }
 
+function loadKits() {
+  //name must be same as path
+  var kit = new Kit("TR808");
+  kit.load();
+
+  //THIS IS BAD BUT FOR NOW
+  // while (!kit.isLoaded)  {
+
+  // }
+  currentKit = kit;
+}
+
+
+//TODO delete this
 function loadTestBuffer() {
   var request = new XMLHttpRequest();
   var url = "http://www.freesound.org/data/previews/102/102130_1721044-lq.mp3";
@@ -40,6 +60,7 @@ function loadTestBuffer() {
   request.send();
 }
 
+//
 function sequencePads() {
   $('.pad.selected').each(function() {
     $('.pad').removeClass("selected");
@@ -66,7 +87,8 @@ function schedule() {
 
       if ($currentPad.hasClass("selected")) {
         //just need to initialize a buffer
-        playNote(testBuffer, contextPlayTime);
+        //playNote(testBuffer, contextPlayTime);
+        playNote(currentKit.kickBuffer, contextPlayTime);
       }
       if (noteTime != lastDrawTime) {
           lastDrawTime = noteTime;
@@ -81,6 +103,7 @@ function schedule() {
 function drawPlayhead(xindex) {
     var lastIndex = (xindex + LOOP_LENGTH - 1) % LOOP_LENGTH;
 
+    //can change this to class selector to select a column
     var $newRow = $('#pad_' + xindex);
     var $oldRow = $('#pad_' + lastIndex);
     

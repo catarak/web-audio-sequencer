@@ -26,6 +26,9 @@ Kit.prototype.load = function() {
   //don't want to have set number of instruments, or whatever
   var kickPath = pathName + "kick.aif";
 
+  //TEMPORARY
+  kickPath = "http://www.freesound.org/data/previews/102/102130_1721044-lq.mp3";
+
   this.loadSample(kickPath);
 
 
@@ -49,6 +52,9 @@ Kit.prototype.loadSample = function(url) {
       function(buffer) {
         kit.kickBuffer = buffer;
         kit.isLoaded = true;
+      },
+      function(buffer) {
+        console.log("Error decoding drum samples!");
       }
     );
   }
