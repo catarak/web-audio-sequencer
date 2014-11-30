@@ -5,6 +5,7 @@ var lastDrawTime = -1;
 var LOOP_LENGTH = 4;
 var rhythmIndex = 0;
 var timeoutId;
+var testBuffer = null;
 
 $(function() {
   $('.pad').click(function() {
@@ -16,6 +17,27 @@ $(function() {
 
 function init() {
   context = new webkitAudioContext();
+  loadTestBuffer();
+}
+
+function loadTestBuffer() {
+  var request = new XMLHttpRequest();
+  var url = "http://www.freesound.org/data/previews/102/102130_1721044-lq.mp3";
+  request.open("GET", url, true);
+  request.responseType = "arraybuffer";
+
+  request.onload = function() {
+    context.decodeAudioData(
+      request.response,
+      function(buffer) { 
+        testBuffer = buffer;
+      },
+      function(buffer) {
+        console.log("Error decoding drum samples!");
+      }
+    );
+  }
+  request.send();
 }
 
 function sequencePads() {
@@ -25,6 +47,13 @@ function sequencePads() {
   });
 }
 
+function playNote(buffer, noteTime) {
+  var voice = context.createBufferSource();
+  voice.buffer = buffer;
+  voice.connect(context.destination);
+  voice.start(noteTime);
+}
+
 function schedule() {
   var currentTime = context.currentTime;
 
@@ -32,6 +61,13 @@ function schedule() {
   currentTime -= startTime;
 
   while (noteTime < currentTime + 0.200) {
+      var contextPlayTime = noteTime + startTime;
+      var $currentPad = $("#pad_" + rhythmIndex);
+
+      if ($currentPad.hasClass("selected")) {
+        //just need to initialize a buffer
+        playNote(testBuffer, contextPlayTime);
+      }
       if (noteTime != lastDrawTime) {
           lastDrawTime = noteTime;
           drawPlayhead(rhythmIndex);
