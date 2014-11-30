@@ -83,13 +83,22 @@ function schedule() {
 
   while (noteTime < currentTime + 0.200) {
       var contextPlayTime = noteTime + startTime;
-      var $currentPad = $("#pad_" + rhythmIndex);
-
-      if ($currentPad.hasClass("selected")) {
-        //just need to initialize a buffer
-        //playNote(testBuffer, contextPlayTime);
-        playNote(currentKit.kickBuffer, contextPlayTime);
-      }
+      var $currentPads = $(".column_" + rhythmIndex);
+      $currentPads.each(function() {
+        if ($(this).hasClass("selected")) {
+          var instrumentName = $(this).parent().data("instrument");
+          switch (instrumentName) {
+          case "kick":
+            playNote(currentKit.kickBuffer, contextPlayTime);
+            break;
+          case "snare":
+            playNote(currentKit.snareBuffer, contextPlayTime);
+            break;
+        }
+          //play the buffer
+          //store a data element in the row that tells you what instrument
+        }
+      });
       if (noteTime != lastDrawTime) {
           lastDrawTime = noteTime;
           drawPlayhead(rhythmIndex);
@@ -104,11 +113,11 @@ function drawPlayhead(xindex) {
     var lastIndex = (xindex + LOOP_LENGTH - 1) % LOOP_LENGTH;
 
     //can change this to class selector to select a column
-    var $newRow = $('#pad_' + xindex);
-    var $oldRow = $('#pad_' + lastIndex);
+    var $newRows = $('.column_' + xindex);
+    var $oldRows = $('.column_' + lastIndex);
     
-    $newRow.addClass("playing");
-    $oldRow.removeClass("playing");
+    $newRows.addClass("playing");
+    $oldRows.removeClass("playing");
 }
 
 function advanceNote() {
