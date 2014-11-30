@@ -26,12 +26,7 @@ Kit.prototype.load = function() {
   //don't want to have set number of instruments, or whatever
   var kickPath = pathName + "kick.mp3";
 
-  //TEMPORARY
-  //kickPath = "http://www.freesound.org/data/previews/102/102130_1721044-lq.mp3";
-
   this.loadSample(kickPath);
-
-
 };
 
 //also make a class per buffer/sample? can store prettified name?
