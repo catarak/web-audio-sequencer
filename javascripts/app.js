@@ -31,11 +31,9 @@ function loadKits() {
   var kit = new Kit("TR808");
   kit.load();
 
-  //THIS IS BAD BUT FOR NOW
-  // while (!kit.isLoaded)  {
-
-  // }
+  //TODO: figure out how to test if a kit is loaded
   currentKit = kit;
+
 }
 
 
@@ -60,7 +58,7 @@ function loadTestBuffer() {
   request.send();
 }
 
-//
+//TODO delete this
 function sequencePads() {
   $('.pad.selected').each(function() {
     $('.pad').removeClass("selected");
@@ -71,6 +69,7 @@ function sequencePads() {
 function playNote(buffer, noteTime) {
   var voice = context.createBufferSource();
   voice.buffer = buffer;
+  //change THIS to add reverb and stuff
   voice.connect(context.destination);
   voice.start(noteTime);
 }
@@ -93,6 +92,9 @@ function schedule() {
             break;
           case "snare":
             playNote(currentKit.snareBuffer, contextPlayTime);
+            break;
+          case "hihat":
+            playNote(currentKit.hihatBuffer, contextPlayTime);
             break;
         }
           //play the buffer

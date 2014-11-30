@@ -6,7 +6,7 @@ function Kit(name) {
 
   this.kickBuffer = null;
   this.snareBuffer = null;
-  //this.hihatBuffer = null;
+  this.hihatBuffer = null;
 
   this.startedLoading = false;
   this.isLoaded = false;
@@ -29,9 +29,11 @@ Kit.prototype.load = function() {
   //don't want to have set number of instruments, or whatever
   var kickPath = pathName + "kick.mp3";
   var snarePath = pathName + "snare.mp3";
+  var hihatPath = pathName + "hihat.mp3";
 
   this.loadSample(kickPath, "kick");
   this.loadSample(snarePath, "snare");
+  this.loadSample(hihatPath, "hihat");
 };
 
 //also make a class per buffer/sample? can store prettified name?
@@ -56,6 +58,9 @@ Kit.prototype.loadSample = function(url, instrumentName) {
             break;
           case "snare":
             kit.snareBuffer = buffer;
+            break;
+          case "hihat":
+            kit.hihatBuffer = buffer;
             break;
         }
         kit.instrumentLoadCount++;
