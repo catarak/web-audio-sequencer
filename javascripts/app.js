@@ -9,7 +9,7 @@ var lowPassFilterNode;
 var noteTime;
 var startTime;
 var lastDrawTime = -1;
-var LOOP_LENGTH = 4;
+var LOOP_LENGTH = 16;
 var rhythmIndex = 0;
 var timeoutId;
 var testBuffer = null;
@@ -243,7 +243,7 @@ function schedule() {
       var $currentPads = $(".column_" + rhythmIndex);
       $currentPads.each(function() {
         if ($(this).hasClass("selected")) {
-          var instrumentName = $(this).parent().data("instrument");
+          var instrumentName = $(this).parents().data("instrument");
           switch (instrumentName) {
           case "kick":
             playNote(currentKit.kickBuffer, contextPlayTime);

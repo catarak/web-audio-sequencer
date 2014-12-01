@@ -1,6 +1,6 @@
 .pad {
-  width: 5em; 
-  height: 5em; 
+  width: 3em; 
+  height: 3em; 
   margin-bottom: 1em;
   display: inline-block; 
   background: #DADADA; 
@@ -35,4 +35,14 @@
 
 .control {
   margin: 10px 0;
+}
+
+.instrument-label {
+    display: inline-block;
+    vertical-align: top;
+    width: 3em;
+    position: relative;
+    top: 1em;
+    text-align: right;
+    margin-right: 1em;
 }
