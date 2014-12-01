@@ -60,8 +60,18 @@
       </div>
     </div>
     <div class="row">
-      <div class="filter-controls col-md-6">
-        <button id="lpf" class="btn btn-default btn-lg">Low Pass Filter</button>
+      <div class="filter-controls col-md-4">
+        <div class="control">
+          <button id="lpf" class="btn btn-default btn-lg">Low Pass Filter</button>
+        </div>
+        <div class="control">
+          <label for="freq-slider">Cutoff Frequency</label>
+          <input id="freq-slider" type="range" name="points" min="0" max="1" step="0.01" value="1" disabled>
+        </div>
+        <div class="control">
+          <label for="quality-slider">Quality</label>
+          <input id="quality-slider" type="range" name="points" min="0" max="1" step="0.01" value="0" disabled>
+        </div>
       </div>
     </div>
   </div>

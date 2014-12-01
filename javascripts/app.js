@@ -25,6 +25,8 @@ $(function() {
   toggleSelectedListener();
   playPauseListener();
   lowPassFilterListener();
+  changeFrequencyListener();
+  changeQualityListener();
 });
 
 function lowPassFilterListener() {
@@ -35,13 +37,32 @@ function lowPassFilterListener() {
       $(this).removeClass("btn-default");
       $(this).addClass("btn-warning");
       lowPassFilterNode.active = true;
+      $("#freq-slider,#quality-slider").prop('disabled', false);
     }
     else {
       $(this).addClass("btn-default");
       $(this).removeClass("btn-warning");
       lowPassFilterNode.active = false;
+      $("#freq-slider,#quality-slider").prop('disabled', true);
     }
   })
+}
+
+function changeFrequencyListener() {
+  $("#freq-slider").change(function() {
+    var minValue = 40;
+    var maxValue = context.sampleRate / 2;
+    var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
+    var multiplier = Math.pow(2, numberOfOctaves * ($(this).val() - 1.0));
+    lowPassFilterNode.frequency.value = maxValue * multiplier;
+  });
+}
+
+function changeQualityListener() {
+  $("#quality-slider").change(function() {
+    //30 is the quality multiplier, for now. 
+    lowPassFilterNode.Q.value = $(this).val() * 30;
+  });
 }
 
 function playPauseListener() {
@@ -107,7 +128,8 @@ function initializeAudioNodes() {
   lowPassFilterNode = context.createBiquadFilter();
   //this is for backwards compatibility, the type used to be an integer
   lowPassFilterNode.type = (typeof lowPassFilterNode.type === 'string') ? 'lowpass' : 0; // LOWPASS
-  lowPassFilterNode.frequency.value = 400;
+  //default value is max cutoff, or passing all frequencies
+  lowPassFilterNode.frequency.value = context.sampleRate / 2;
   lowPassFilterNode.connect(masterGainNode);
   lowPassFilterNode.active = false;
 }
