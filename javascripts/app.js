@@ -25,9 +25,27 @@ $(function() {
   toggleSelectedListener();
   playPauseListener();
   lowPassFilterListener();
-  changeFrequencyListener();
-  changeQualityListener();
+  createLowPassFilterSliders();
 });
+
+function createLowPassFilterSliders() {
+  $("#freq-slider").slider({
+    value: 1,
+    min: 0,
+    max: 1,
+    step: 0.01,
+    disabled: true,
+    slide: changeFrequency
+  });
+  $("#quality-slider").slider({
+    value: 0,
+    min: 0,
+    max: 1,
+    step: 0.01,
+    disabled: true,
+    slide: changeQuality
+  });
+}
 
 function lowPassFilterListener() {
   $('#lpf').click(function() {
@@ -37,32 +55,28 @@ function lowPassFilterListener() {
       $(this).removeClass("btn-default");
       $(this).addClass("btn-warning");
       lowPassFilterNode.active = true;
-      $("#freq-slider,#quality-slider").prop('disabled', false);
+      $("#freq-slider,#quality-slider").slider( "option", "disabled", false );
     }
     else {
       $(this).addClass("btn-default");
       $(this).removeClass("btn-warning");
       lowPassFilterNode.active = false;
-      $("#freq-slider,#quality-slider").prop('disabled', true);
+      $("#freq-slider,#quality-slider").slider( "option", "disabled", true );
     }
   })
 }
 
-function changeFrequencyListener() {
-  $("#freq-slider").change(function() {
-    var minValue = 40;
-    var maxValue = context.sampleRate / 2;
-    var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
-    var multiplier = Math.pow(2, numberOfOctaves * ($(this).val() - 1.0));
-    lowPassFilterNode.frequency.value = maxValue * multiplier;
-  });
+function changeFrequency(event, ui) {
+  var minValue = 40;
+  var maxValue = context.sampleRate / 2;
+  var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
+  var multiplier = Math.pow(2, numberOfOctaves * (ui.value - 1.0));
+  lowPassFilterNode.frequency.value = maxValue * multiplier;
 }
 
-function changeQualityListener() {
-  $("#quality-slider").change(function() {
-    //30 is the quality multiplier, for now. 
-    lowPassFilterNode.Q.value = $(this).val() * 30;
-  });
+function changeQuality(event, ui) {
+  //30 is the quality multiplier, for now. 
+  lowPassFilterNode.Q.value = ui.value * 30;
 }
 
 function playPauseListener() {
