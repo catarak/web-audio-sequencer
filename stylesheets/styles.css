@@ -40,9 +40,9 @@
 .instrument-label {
     display: inline-block;
     vertical-align: top;
-    width: 3em;
+    width: 4em;
     position: relative;
     top: 1em;
     text-align: right;
-    margin-right: 1em;
+    margin-right: 0.5em;
 }
