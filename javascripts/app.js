@@ -21,14 +21,15 @@ $(function() {
 
 function playPauseListener() {
   $('#play-pause').click(function() {
-    if($(this).hasClass('glyphicon-play')) {
-      $(this).removeClass('glyphicon-play');
-      $(this).addClass('glyphicon-pause');
+    var $span = $(this).children("span");
+    if($span.hasClass('glyphicon-play')) {
+      $span.removeClass('glyphicon-play');
+      $span.addClass('glyphicon-pause');
       handlePlay();
     } 
     else {
-      $(this).addClass('glyphicon-play');
-      $(this).removeClass('glyphicon-pause');
+      $span.addClass('glyphicon-play');
+      $span.removeClass('glyphicon-pause');
       handleStop();
     }
   });
@@ -150,6 +151,7 @@ function advanceNote() {
         rhythmIndex = 0;
     }
    
+    //0.25 because each square is a 16th note
     noteTime += 0.25 * secondsPerBeat
     // if (rhythmIndex % 2) {
     //     noteTime += (0.25 + kMaxSwing * theBeat.swingFactor) * secondsPerBeat;
