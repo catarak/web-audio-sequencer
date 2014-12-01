@@ -8,3 +8,4 @@ A few references:
 * [Virtual Synth Pad Tutorial](http://www.sitepoint.com/html5-web-audio-api-tutorial-building-virtual-synth-pad/) - A great starter tutorial, with a few issues
 * [Audio Scheduling](http://www.html5rocks.com/en/tutorials/audio/scheduling/) - An important read on why you need to synchronize to the Web Audio API clock
 * [Free Sound](http://www.freesound.org/) - The best place to get free sounds
+* [Working With Web Audio API](https://developer.tizen.org/documentation/articles/working-web-audio-api) - An article I have not read but I don't want to forget exists
