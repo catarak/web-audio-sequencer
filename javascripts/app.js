@@ -1,4 +1,11 @@
+//audio node variables
 var context;
+var convolver;
+var compressor;
+var masterGainNode;
+var effectLevelNode;
+var lowPassFilterNode;
+
 var noteTime;
 var startTime;
 var lastDrawTime = -1;
@@ -17,7 +24,25 @@ $(function() {
   init();
   toggleSelectedListener();
   playPauseListener();
+  lowPassFilterListener();
 });
+
+function lowPassFilterListener() {
+  $('#lpf').click(function() {
+    $(this).toggleClass("active");
+    $(this).blur();
+    if ($(this).hasClass("btn-default")) {
+      $(this).removeClass("btn-default");
+      $(this).addClass("btn-warning");
+      lowPassFilterNode.active = true;
+    }
+    else {
+      $(this).addClass("btn-default");
+      $(this).removeClass("btn-warning");
+      lowPassFilterNode.active = false;
+    }
+  })
+}
 
 function playPauseListener() {
   $('#play-pause').click(function() {
@@ -42,8 +67,49 @@ function toggleSelectedListener() {
 }
 
 function init() {
-  context = new webkitAudioContext();
+  initializeAudioNodes();
   loadKits();
+}
+
+function initializeAudioNodes() {
+  context = new webkitAudioContext();
+  var finalMixNode;
+  if (context.createDynamicsCompressor) {
+      // Create a dynamics compressor to sweeten the overall mix.
+      compressor = context.createDynamicsCompressor();
+      compressor.connect(context.destination);
+      finalMixNode = compressor;
+  } else {
+      // No compressor available in this implementation.
+      finalMixNode = context.destination;
+  }
+
+
+  // Create master volume.
+  // for now, the master volume is static, but in the future there will be a slider
+  masterGainNode = context.createGain();
+  masterGainNode.gain.value = 0.7; // reduce overall volume to avoid clipping
+  masterGainNode.connect(finalMixNode);
+
+  //connect all sounds to masterGainNode to play them
+
+  //don't need these for now, but soon I'll add reverb
+  // // Create effect volume.
+  // effectLevelNode = context.createGain();
+  // effectLevelNode.gain.value = 1.0; // effect level slider controls this
+  // effectLevelNode.connect(masterGainNode);
+
+  // // Create convolver for effect
+  // convolver = context.createConvolver();
+  // convolver.connect(effectLevelNode);
+
+  //Create Low Pass Filter
+  lowPassFilterNode = context.createBiquadFilter();
+  //this is for backwards compatibility, the type used to be an integer
+  lowPassFilterNode.type = (typeof lowPassFilterNode.type === 'string') ? 'lowpass' : 0; // LOWPASS
+  lowPassFilterNode.frequency.value = 400;
+  lowPassFilterNode.connect(masterGainNode);
+  lowPassFilterNode.active = false;
 }
 
 function loadKits() {
@@ -90,7 +156,14 @@ function playNote(buffer, noteTime) {
   var voice = context.createBufferSource();
   voice.buffer = buffer;
   //change THIS to add reverb and stuff
-  voice.connect(context.destination);
+
+  //add button to turn Filter on and off
+  if (lowPassFilterNode.active) {
+    voice.connect(lowPassFilterNode); 
+  }
+  else {
+    voice.connect(masterGainNode);
+  }
   voice.start(noteTime);
 }
 
