@@ -15,6 +15,7 @@ var timeoutId;
 var testBuffer = null;
 
 var currentKit = null;
+var reverbImpulseResponse = null;
 
 if (window.hasOwnProperty('AudioContext') && !window.hasOwnProperty('webkitAudioContext')) {
   window.webkitAudioContext = AudioContext;
@@ -25,6 +26,7 @@ $(function() {
   toggleSelectedListener();
   playPauseListener();
   lowPassFilterListener();
+  reverbListener();
   createLowPassFilterSliders();
 });
 
@@ -62,6 +64,23 @@ function lowPassFilterListener() {
       $(this).removeClass("btn-warning");
       lowPassFilterNode.active = false;
       $("#freq-slider,#quality-slider").slider( "option", "disabled", true );
+    }
+  })
+}
+
+function reverbListener() {
+  $("#reverb").click(function() {
+    $(this).toggleClass("active");
+    $(this).blur();
+    if ($(this).hasClass("btn-default")) {
+      $(this).removeClass("btn-default");
+      $(this).addClass("btn-warning");
+      convolver.active = true;
+    }
+    else {
+      $(this).addClass("btn-default");
+      $(this).removeClass("btn-warning");
+      convolver.active = false;
     }
   })
 }
@@ -104,6 +123,7 @@ function toggleSelectedListener() {
 function init() {
   initializeAudioNodes();
   loadKits();
+  loadImpulseResponses();
 }
 
 function initializeAudioNodes() {
@@ -128,14 +148,15 @@ function initializeAudioNodes() {
 
   //connect all sounds to masterGainNode to play them
 
-  //don't need these for now, but soon I'll add reverb
+  //don't need this for now, no wet dry mix for effects
   // // Create effect volume.
   // effectLevelNode = context.createGain();
   // effectLevelNode.gain.value = 1.0; // effect level slider controls this
   // effectLevelNode.connect(masterGainNode);
 
-  // // Create convolver for effect
-  // convolver = context.createConvolver();
+  // Create convolver for effect
+  convolver = context.createConvolver();
+  convolver.active = false;
   // convolver.connect(effectLevelNode);
 
   //Create Low Pass Filter
@@ -155,7 +176,11 @@ function loadKits() {
 
   //TODO: figure out how to test if a kit is loaded
   currentKit = kit;
+}
 
+function loadImpulseResponses() {
+  reverbImpulseResponse = new ImpulseResponse("sounds/impulse-responses/matrix-reverb2.wav");
+  reverbImpulseResponse.load();
 }
 
 
@@ -191,15 +216,19 @@ function sequencePads() {
 function playNote(buffer, noteTime) {
   var voice = context.createBufferSource();
   voice.buffer = buffer;
-  //change THIS to add reverb and stuff
 
-  //add button to turn Filter on and off
+  var currentLastNode = masterGainNode;
   if (lowPassFilterNode.active) {
-    voice.connect(lowPassFilterNode); 
+    lowPassFilterNode.connect(currentLastNode);
+    currentLastNode = lowPassFilterNode;
   }
-  else {
-    voice.connect(masterGainNode);
+  if (convolver.active) {
+    convolver.buffer = reverbImpulseResponse.buffer;
+    convolver.connect(currentLastNode);
+    currentLastNode = convolver;
   }
+
+  voice.connect(currentLastNode);
   voice.start(noteTime);
 }
 
