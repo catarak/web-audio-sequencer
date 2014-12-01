@@ -14,12 +14,31 @@ if (window.hasOwnProperty('AudioContext') && !window.hasOwnProperty('webkitAudio
 }
 
 $(function() {
+  init();
+  toggleSelectedListener();
+  playPauseListener();
+});
+
+function playPauseListener() {
+  $('#play-pause').click(function() {
+    if($(this).hasClass('glyphicon-play')) {
+      $(this).removeClass('glyphicon-play');
+      $(this).addClass('glyphicon-pause');
+      handlePlay();
+    } 
+    else {
+      $(this).addClass('glyphicon-play');
+      $(this).removeClass('glyphicon-pause');
+      handleStop();
+    }
+  });
+}
+
+function toggleSelectedListener() {
   $('.pad').click(function() {
     $(this).toggleClass("selected");
   });
-  init();
-  handlePlay();
-});
+}
 
 function init() {
   context = new webkitAudioContext();
@@ -144,4 +163,10 @@ function handlePlay(event) {
     noteTime = 0.0;
     startTime = context.currentTime + 0.005;
     schedule();
+}
+
+function handleStop(event) {
+  clearTimeout(timeoutId);
+  rhythmIndex = 0;
+  $(".pad").removeClass("playing");
 }
