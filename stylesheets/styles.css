@@ -6,6 +6,7 @@
   background: #DADADA; 
   box-shadow: rgba(0, 0, 0, 0.0980392) -6px 6px 0px 0px inset;
   margin-right: 1em; 
+  cursor: pointer;
 }
 
 .selected {
@@ -45,4 +46,21 @@
     top: 1em;
     text-align: right;
     margin-right: 0.5em;
+}
+
+.tempo-container {
+  margin: 0 10px;
+}
+
+#tempo-input {
+  margin: 0 10px;
+  line-height: 30px;
+  border-radius: 3px;
+  font-size: 25px;
+  width: 60px;
+  vertical-align: middle;
+}
+
+.tempo-btn {
+  margin: 0 5px;
 }

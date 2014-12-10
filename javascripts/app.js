@@ -17,6 +17,11 @@ var testBuffer = null;
 var currentKit = null;
 var reverbImpulseResponse = null;
 
+var tempo = 120;
+var TEMPO_MAX = 200;
+var TEMPO_MIN = 40;
+var TEMPO_STEP = 4;
+
 if (window.hasOwnProperty('AudioContext') && !window.hasOwnProperty('webkitAudioContext')) {
   window.webkitAudioContext = AudioContext;
 }
@@ -28,6 +33,8 @@ $(function() {
   lowPassFilterListener();
   reverbListener();
   createLowPassFilterSliders();
+  initializeTempo();
+  changeTempoListener();
 });
 
 function createLowPassFilterSliders() {
@@ -283,7 +290,9 @@ function drawPlayhead(xindex) {
 function advanceNote() {
     // Advance time by a 16th note...
     // var secondsPerBeat = 60.0 / theBeat.tempo;
-    var secondsPerBeat = 60.0 / 60.0;
+    //TODO CHANGE TEMPO HERE, convert to float
+    tempo = Number($("#tempo-input").val());
+    var secondsPerBeat = 60.0 / tempo;
     rhythmIndex++;
     if (rhythmIndex == LOOP_LENGTH) {
         rhythmIndex = 0;
@@ -309,4 +318,24 @@ function handleStop(event) {
   clearTimeout(timeoutId);
   rhythmIndex = 0;
   $(".pad").removeClass("playing");
+}
+
+function initializeTempo() {
+  $("#tempo-input").val(tempo);
+}
+
+function changeTempoListener() {
+  $("#increase-tempo").click(function() {
+    if (tempo < TEMPO_MAX) {
+      tempo += TEMPO_STEP;
+      $("#tempo-input").val(tempo);
+    }
+  });
+
+  $("#decrease-tempo").click(function() {
+    if (tempo > TEMPO_MIN) {
+      tempo -= TEMPO_STEP;
+      $("#tempo-input").val(tempo);
+    } 
+  });
 }
