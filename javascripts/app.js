@@ -273,7 +273,7 @@ function schedule() {
       advanceNote();
   }
 
-  timeoutId = setTimeout("schedule()", 0);
+  timeoutId = requestAnimationFrame(schedule)
 }
 
 function drawPlayhead(xindex) {
@@ -315,7 +315,7 @@ function handlePlay(event) {
 }
 
 function handleStop(event) {
-  clearTimeout(timeoutId);
+  cancelAnimationFrame(timeoutId);
   rhythmIndex = 0;
   $(".pad").removeClass("playing");
 }

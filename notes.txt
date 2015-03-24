@@ -1,0 +1,73 @@
+You just discovered web audio, and you want to make music. 
+
+DON'T USE A FOR LOOP. JavaScript is single threaded.
+
+I will not synchronize to the JavaScript clock. 
+
+DO NOT USE THE JAVASCRIPT CLOCK. Okay? Say it with me. 
+"I will not use the Javascript clock."
+
+Now I know you really want to use the JavaScript clock. HERE'S WHY NOT.
+
+setInterval and setTimeout aren't *actually* guaranteed to execute in the time specified. 
+
+JavaScript is single threaded, therefore each unit of execution blocks the progess of another asynchronous event. 
+JavaScript will not enqueue more than one instance of a setInterval handler. Whatever time you put, it's guaranteed to run AFTER that time, but it could be delayed if there is blocking code.
+
+You don't want to rely on setInterval to schedule notes (which will FOR SURE be played at the time you scheduled them because Web Audio API), because you might schedule them at the wrong time. You might say, that event was being a clock block.
+
+You might be tempted to do something like this:
+```
+function schedule() {
+  playNote(audioContext.currentTime);
+  setTimeout(schedule, secondsPerSixteenthNote);
+} 
+```
+
+So how do we fix this? You look ahead. When scheduling a note, you look ahead.
+
+Sequencer:
+Get a play event. 
+Reset startTime and noteTime
+
+startTime is the time at which you hit "play".
+currentTime is the time since startTime
+
+```javascript
+while (nextNoteTime < currentTime + lookAheadTime ) {
+  scheduleNote( nextNoteTime );
+  advanceNote();
+}
+```
+
+the schedule loop looks something like this: 
+```
+function schedule() {
+  var currentTime = audioContext.currentTime - startTime;
+  while (nextNoteTime < currentTime + lookAheadTime ) {
+    scheduleNotes( nextNoteTime );
+    advanceNote();
+  }
+  timeoutId = setTimeout(schedule, 0);
+}
+```
+
+A few things to break down: 
+currentTime is the time SINCE hitting play and starting the sequencer
+nextNoteTime is the scheduled time for the next note to play, based on the tempo.
+lookAheadTime depends on the execution speed of JavaScript. In my case, I used 200 ms.
+schedule notes AHEAD OF TIME, with the exact time that you want them to play.
+save timeoutId so that you can stop the sequencer (clearTimeout(timeoutId);).
+
+Most of the time, the while loop isn't even run, because after it executes successfully
+and a note is scheduled, it increments nextNoteTime to the next time that a note is scheduled, which may or may not be less than currentTime + lookAheadTime.
+
+```
+function advanceNote() {
+  var secondsPerBeat = 60.0 / currentTempo();
+  nextNoteTime += beatGranularity * secondsPerBeat;
+}
+```
+
+when advancing the note, need to grab the current tempo and advance the note based on the time signature. In my case, and in most cases, the grid will be sixteenth notes, so beatGranularity = 0.25.
+
