@@ -309,6 +309,7 @@ function advanceNote() {
 }
 
 function handlePlay(event) {
+    rhythmIndex = 0;
     noteTime = 0.0;
     startTime = context.currentTime + 0.005;
     schedule();
@@ -316,7 +317,6 @@ function handlePlay(event) {
 
 function handleStop(event) {
   cancelAnimationFrame(timeoutId);
-  rhythmIndex = 0;
   $(".pad").removeClass("playing");
 }
 
