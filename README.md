@@ -1,4 +1,4 @@
-#Baby's First Web Audio Sequencer
+# Baby's First Web Audio Sequencer
 
 This is my first forray into the world of the Web Audio API! I decided to create a drum sequencer, because, who doesn't love playing with drum machines?
 
